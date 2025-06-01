@@ -1,0 +1,103 @@
+﻿@page "/products"
+@using TheLoadingBean.Shared.DTOs
+@using TheLoadingBean.Client.Services
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<PageTitle>Shop</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.False" Class="products-section">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="page-title">Browse Our Products</MudText>
+
+    <!-- Filtersektion -->
+    <div class="products-filter">
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search..."
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+                      Class="mb-2" />
+
+        <MudSelect T="string" Label="Category" @bind-Value="selectedCategory" Dense Class="mb-2">
+            <MudSelectItem Value="@AllCategory">@AllCategory</MudSelectItem>
+            @foreach (var category in categories)
+            {
+                <MudSelectItem Value="@category">@category</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+
+    <!-- Produktkort -->
+    <MudGrid GutterSize="GutterSize.Small">
+        @foreach (var product in FilteredProducts)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="2">
+                <MudCard Class="product-card">
+                    <MudCardMedia Image="@product.ImageUrl" Alt="@product.Name" Class="product-image" />
+
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6" Class="product-title">@product.Name</MudText>
+                        <MudText Typo="Typo.body2">@product.Description</MudText>
+                        <MudText Typo="Typo.subtitle2" Class="product-price">@($"{product.Price} kr")</MudText>
+                        <MudText Typo="Typo.caption">Category: @product.Category</MudText>
+
+                        @if (!product.IsAvailable || product.IsDiscontinued)
+                        {
+                            <MudChip T="string" Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">Out of Stock</MudChip>
+                        }
+                    </MudCardContent>
+
+                    <MudCardActions Class="justify-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                                   Disabled="@(!product.IsAvailable || product.IsDiscontinued)"
+                                   OnClick="@(() => AddToCart(product))">
+                            Add to Cart
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private const string AllCategory = "All";
+
+    private List<ProductResponseDto> products = new();
+    private string searchTerm = "";
+    private string selectedCategory = AllCategory;
+    private List<string> categories = new();
+
+    private IEnumerable<ProductResponseDto> FilteredProducts =>
+        products.Where(p =>
+            (string.IsNullOrWhiteSpace(searchTerm) ||
+                p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.ProductNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(selectedCategory) || selectedCategory == AllCategory || p.Category == selectedCategory));
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductService.GetAllProductsAsync();
+
+        foreach (var p in products)
+        {
+            p.ImageUrl ??= $"/images/{p.Name.Replace(" ", "").ToLower()}.png";
+        }
+
+        categories = products.Select(p => p.Category).Distinct().ToList();
+    }
+
+    private async Task AddToCart(ProductResponseDto product)
+    {
+        var success = await CartService.TryAddToCartAsync(product);
+
+        if (success)
+        {
+            Snackbar.Add($"✅ {product.Name} added to cart!", Severity.Success);
+        }
+        else
+        {
+            Snackbar.Add("⚠️ Could not add product to cart.", Severity.Warning);
+        }
+    }
+}

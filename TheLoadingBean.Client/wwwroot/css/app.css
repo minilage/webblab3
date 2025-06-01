@@ -1,13 +1,18 @@
-/* === Allmänt === */
+/* =============================
+   GLOBALT: FONTER, BAKGRUND, TEXT
+============================= */
 html, body {
     font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-color: #3e2723;
     color: #fffaf5;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
-/* === Navbar === */
+/* =============================
+   NAVIGATION / NAVBAR
+============================= */
 .mud-appbar {
     background-color: #1e392a !important;
     color: white;
@@ -35,19 +40,23 @@ html, body {
         border-bottom: 2px solid white;
     }
 
-/* === Main Content === */
+/* =============================
+   MAIN LAYOUT CONTENT
+============================= */
 .mud-main-content {
     background-color: #3e2723;
-    padding: 0;
+    padding: 2rem 1rem 0;
+    margin-top: 2rem;
 }
 
-/* === Hero Sektion === */
+/* =============================
+   HERO-SEKTION (Index) 
+============================= */
 .hero-section {
     position: relative;
     background-color: #1e392a;
-    padding-top: 1rem 0;
+    padding: 1rem 0;
     overflow: hidden;
-    border-bottom: 4px solid #795548;
     z-index: 0;
 }
 
@@ -78,8 +87,11 @@ html, body {
     font-family: 'Pacifico', cursive;
     font-size: 4rem;
     margin-bottom: 1rem;
-    color: #fffaf5;
+    color: #fcead7;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.6);
+    max-width: 100%;
+    padding: 0 1rem;
+    word-wrap: break-word;
 }
 
 .hero-subtitle,
@@ -97,50 +109,81 @@ html, body {
     border-radius: 6px;
 }
 
-/* === Produktsektion === */
-.popular-title {
-    color: #3e2723;
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin: 2rem 1rem 1rem;
-    text-align: center;
+/* =============================
+   HERO-BAKGRUND (FULL BREDD)
+============================= */
+.hero-background-wrapper {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    background-color: #1e392a;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
 }
 
-.product-card {
-    background-color: #ffeacc;
-    border-radius: 10px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    padding: 1rem;
-    color: #3e2723;
+/* =============================
+   ÅTERANVÄNDBARA SIDRUBRIKER
+============================= */
+.page-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.8rem;
+    color: #fffaf5;
     text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
 }
 
-    .product-card h6 {
-        font-weight: bold;
-        font-size: 1.2rem;
-        margin-top: 0.5rem;
-        color: #1e392a;
-    }
-
-/* === Produktbilder === */
-.product-image {
+/* =============================
+   ÅTERANVÄNDBARA BILDER/BANNERS
+============================= */
+.section-banner {
     width: 100%;
-    height: auto;
-    max-height: 180px;
-    object-fit: contain;
-    border-radius: 10px;
-    margin-bottom: 0.75rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    object-fit: cover;
 }
 
-/* === Buttons === */
+/* =============================
+   SIDMALL / STATIC PAGES
+============================= */
+.page-section {
+    max-width: 900px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: #3e2723;
+    color: #ffeacc;
+    border-radius: 8px;
+}
+
+.page-section-light {
+    background-color: #f5f5f5;
+    color: #3e2723;
+}
+
+.page-section h4,
+.page-section h6 {
+    color: #fffaf5;
+}
+
+/* =============================
+   KNAPPAR / BUTTONS
+============================= */
 .mud-button {
     background-color: #1e392a !important;
     color: #ffeacc !important;
     cursor: pointer;
 }
 
-/* === Footer === */
+.btn-primary {
+    background-color: #4caf50;
+    color: white;
+}
+
+/* =============================
+   FOOTER
+============================= */
 .footer-section {
     background-color: #3e2723;
     color: #ffeacc;
@@ -148,13 +191,11 @@ html, body {
     text-align: center;
 }
 
-/* === Övrigt === */
-.btn-primary {
-    background-color: #4caf50;
-    color: white;
-}
-
-.mud-table td, .mud-table th {
+/* =============================
+   ÖVRIGT / VALIDERING, TABELLER
+============================= */
+.mud-table td,
+.mud-table th {
     vertical-align: middle;
 }
 
@@ -170,18 +211,78 @@ html, body {
     outline: 1px solid #26b050;
 }
 
-/* === Responsivitet === */
-@media (max-width: 600px) {
+/* =============================
+   TEXTKORT / SMALARE LAYOUTER
+============================= */
+.slim-card {
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* =============================
+   RESPONSIVITET / MOBILANPASSNING
+============================= */
+@media (max-width: 768px) {
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
+        padding: 0 1rem;
+        word-break: break-word;
     }
 
     .hero-subtitle,
     .hero-caption {
         font-size: 1rem;
+        padding: 0 1rem;
     }
 
-    .product-image {
-        max-height: 140px;
+    .page-section {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
     }
+
+    .mud-appbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mud-nav-link {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .footer-section {
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-overlay {
+        padding: 0.5rem 1rem;
+    }
+
+    .hero-background {
+        background-color: #1e392a;
+        width: 100%;
+        padding-top: 1rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .hero-text-wrapper {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        text-align: center;
+    }
+
+    /* Hovereffekt för knappar */
+    .mud-button:hover {
+        background-color: #2e7d32 !important;
+        color: #fffaf5 !important;
+        transform: scale(1.05);
+    }
+
 }

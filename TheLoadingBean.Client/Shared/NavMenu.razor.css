@@ -1,0 +1,58 @@
+﻿/* =============================
+   NAVMENU / DRAWER STYLES
+   Gäller sidomeny (NavMenu.razor)
+============================= */
+
+/* Drawer-container */
+.mud-drawer {
+    background-color: #1e392a;
+    color: white;
+    padding-top: 0.5rem;
+}
+
+/* Drawer-header */
+.mud-drawer-header {
+    padding-left: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #ffeacc;
+}
+
+/* Navlänkar */
+.mud-nav-link {
+    color: #fffaf5 !important;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 6px;
+    margin: 0.25rem 0;
+}
+
+    .mud-nav-link:hover {
+        background-color: #2d4c3c;
+        text-shadow: 0 0 2px rgba(255, 255, 255, 0.4);
+    }
+
+    .mud-nav-link.active {
+        background-color: #336b50;
+        font-weight: bold;
+        border-left: 4px solid #ffeacc;
+    }
+
+/* Ikoner i menyn */
+.mud-icon-root {
+    margin-right: 0.75rem;
+    color: #c8e6c9;
+}
+
+/* Responsivt - mindre text på mobil */
+@media (max-width: 768px) {
+    .mud-nav-link {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+    }
+}

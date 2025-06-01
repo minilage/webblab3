@@ -3,29 +3,33 @@
 @inject NavigationManager NavigationManager
 
 <!-- Hero Sektion -->
-<div class="hero-section">
-    <img src="/images/index.png" alt="The Loading Bean Hero" class="hero-bg-image" />
-    <div class="hero-overlay">
-        <h1 class="hero-title">Welcome to The Loading Bean</h1>
-        <p class="hero-subtitle">We blend coffee, code and cozy vibes for night owls and creators</p>
-        <p class="hero-caption">Fuel your late-night sessions – one cup at a time.</p>
-        <MudButton Variant="Variant.Filled" Class="hero-button" OnClick="@(() => NavigationManager.NavigateTo("/products"))">
-            Explore Our Products
-        </MudButton>
+<div class="hero-background-wrapper">
+    <div class="hero-section">
+        <img src="/images/index.png" alt="The Loading Bean Hero" class="hero-bg-image" />
+        <div class="hero-overlay">
+            <div class="hero-text-wrapper">
+                <h1 class="hero-title">Welcome to The Loading Bean</h1>
+                <p class="hero-subtitle">We blend coffee, code and cozy vibes for night owls and creators</p>
+                <p class="hero-caption">Fuel your late-night sessions – one cup at a time.</p>
+                <MudButton Variant="Variant.Filled" Class="hero-button" OnClick="@(() => NavigationManager.NavigateTo("/products"))">
+                    Explore Our Products
+                </MudButton>
+            </div>
+        </div>
     </div>
 </div>
 
-<MudDivider Class="my-6" />
-
 <!-- Produktsektion -->
-<MudContainer MaxWidth="MaxWidth.False">
-    <MudText Typo="Typo.h4" Class="popular-title">Popular Products</MudText>
+<MudContainer MaxWidth="MaxWidth.False" Class="mt-6">
+    <div class="popular-products-wrapper">
+        <h2 class="popular-title">Popular Products</h2>
+    </div>
 
     <MudGrid>
         @foreach (var product in SampleProducts.Take(3))
         {
             <MudItem xs="12" sm="6" md="4">
-                <div class="product-card mb-4">
+                <div class="home-card mb-4">
                     <img src="@product.ImageUrl" alt="@product.Name" class="product-image" />
                     <MudText Typo="Typo.h6">@product.Name</MudText>
                     <MudText Typo="Typo.body2" Class="mb-2">@product.Description</MudText>

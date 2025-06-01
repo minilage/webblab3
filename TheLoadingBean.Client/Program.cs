@@ -24,6 +24,8 @@ builder.Services.AddBlazoredToast();
 // Add authentication services
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Add authorization
 builder.Services.AddAuthorizationCore();

@@ -1,0 +1,41 @@
+﻿/* =============================
+   ABOUT PAGE STYLES
+============================= */
+
+/* Innehållskort */
+.about-card {
+    background-color: #ffeacc;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #3e2723;
+}
+
+    /* Citatet längst ner */
+    .about-card .quote {
+        color: #1e392a;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+/* Bildbanners */
+.section-banner {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    object-fit: cover;
+}
+
+/* Titel */
+.page-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.8rem;
+    color: #fcead7;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}

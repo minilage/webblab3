@@ -12,6 +12,9 @@ namespace TheLoadingBean.Shared.DTOs
         public string Category { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
         public bool IsDiscontinued { get; set; }
+
+        public string? ImageUrl { get; set; }
+
     }
 
     public class CreateProductDto
@@ -61,6 +64,9 @@ namespace TheLoadingBean.Shared.DTOs
     public class ProductDto
     {
         public string Id { get; set; } = string.Empty;
+
+        [Required]
+        public string ProductNumber { get; set; } = string.Empty;
 
         [Required]
         public string Name { get; set; } = string.Empty;

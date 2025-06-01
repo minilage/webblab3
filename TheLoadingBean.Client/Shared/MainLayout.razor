@@ -6,7 +6,7 @@
 
     <!-- Flyttad meny i stället för MudAppBar -->
     <MudPaper Elevation="4" Class="mud-appbar px-4 d-flex justify-between align-center">
-        <MudText Typo="Typo.h6" Class="text-white py-2">☕ The Loading Bean</MudText>
+        <!-- <MudText Typo="Typo.h6" Class="text-white py-2">☕ The Loading Bean</MudText> -->
 
         <MudNavMenu Class="d-flex align-center">
             <MudNavLink Href="/" Match="NavLinkMatch.All" Class="mx-2">Home</MudNavLink>
@@ -37,7 +37,7 @@
     </MudPaper>
 
     <!-- Huvudinnehåll -->
-    <MudMainContent Class="p-0 m-0">
+    <MudMainContent Class="mud-main-content">
         @Body
     </MudMainContent>
 
