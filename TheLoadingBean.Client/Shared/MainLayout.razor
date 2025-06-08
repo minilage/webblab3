@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthService
 
-<MudLayout>
+<MudLayout Class="app-layout">
 
     <!-- Navbar -->
     <MudPaper Elevation="4" Class="mud-appbar px-4 d-flex justify-between align-center">
@@ -40,9 +40,11 @@
     </MudMainContent>
 
     <!-- Footer -->
-    <MudContainer Class="footer-section mt-4 text-center">
-        <MudText Typo="Typo.caption">© 2025 The Loading Bean. Coded with ☕ by Tina.</MudText>
-    </MudContainer>
+    <div class="footer-wrapper">
+        <div class="footer-section text-center">
+            <MudText Typo="Typo.caption">© 2025 The Loading Bean. Coded with ☕ by Tina.</MudText>
+        </div>
+    </div>
 
 </MudLayout>
 
