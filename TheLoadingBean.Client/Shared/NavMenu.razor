@@ -4,25 +4,26 @@
 @using TheLoadingBean.Shared.DTOs
 @inject IAuthService AuthService
 
-<MudDrawer Elevation="4" Class="mud-theme-primary" Variant="DrawerVariant.Mini">
+<MudDrawer Elevation="4" Class="mud-theme-primary" Variant="DrawerVariant.Mini" Open="true">
     <MudDrawerHeader>
         <MudText Typo="Typo.h6" Class="pl-4 pt-2">The Loading Bean</MudText>
     </MudDrawerHeader>
 
     <MudNavMenu>
-        <MudNavLink Href="" Icon="@Icons.Material.Filled.Home" Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home" Match="NavLinkMatch.All">Home</MudNavLink>
         <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">About</MudNavLink>
-        <MudNavLink Href="products" Icon="@Icons.Material.Filled.LocalCafe">Products</MudNavLink>
+        <MudNavLink Href="/products" Icon="@Icons.Material.Filled.LocalCafe">Products</MudNavLink>
+        <MudNavLink Href="/testapi" Icon="@Icons.Material.Filled.BugReport">Test API</MudNavLink>
 
         <AuthorizeView Roles="Admin">
             <Authorized>
-                <MudNavLink Href="admin/products" Icon="@Icons.Material.Filled.AdminPanelSettings">Product Management</MudNavLink>
+                <MudNavLink Href="/admin/products" Icon="@Icons.Material.Filled.AdminPanelSettings">Product Management</MudNavLink>
             </Authorized>
         </AuthorizeView>
 
         <AuthorizeView>
             <Authorized>
-                <MudNavLink Href="orders" Icon="@Icons.Material.Filled.ShoppingCart">My Orders</MudNavLink>
+                <MudNavLink Href="/orders" Icon="@Icons.Material.Filled.ShoppingCart">My Orders</MudNavLink>
             </Authorized>
         </AuthorizeView>
     </MudNavMenu>

@@ -1,0 +1,43 @@
+﻿@page "/testapi"
+@inject IProductService ProductService
+
+<h3>Test API Connection</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (errorMessage != null)
+{
+    <p style="color: red;">@errorMessage</p>
+}
+else
+{
+    <p>API answered with @products.Count products 🎉</p>
+    <ul>
+        @foreach (var p in products)
+        {
+            <li>@p.Name (@p.Price kr)</li>
+        }
+    </ul>
+}
+
+@code {
+    private List<ProductResponseDto> products = new();
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            products = await ProductService.GetAllProductsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+
+        isLoading = false;
+    }
+}

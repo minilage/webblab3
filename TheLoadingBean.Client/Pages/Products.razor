@@ -70,21 +70,27 @@
     private IEnumerable<ProductResponseDto> FilteredProducts =>
         products.Where(p =>
             (string.IsNullOrWhiteSpace(searchTerm) ||
-                p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                p.ProductNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                p.Category.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
-            (string.IsNullOrWhiteSpace(selectedCategory) || selectedCategory == AllCategory || p.Category == selectedCategory));
+                (p.Name?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.ProductNumber?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Category?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)) &&
+            (string.IsNullOrWhiteSpace(selectedCategory) || selectedCategory == AllCategory || p.Category == selectedCategory)
+        );
 
     protected override async Task OnInitializedAsync()
     {
-        products = await ProductService.GetAllProductsAsync();
+        products = await ProductService.GetAllProductsAsync() ?? new();
 
         foreach (var p in products)
         {
             p.ImageUrl ??= $"/images/{p.Name.Replace(" ", "").ToLower()}.png";
         }
 
-        categories = products.Select(p => p.Category).Distinct().ToList();
+        categories = products
+            .Select(p => p.Category ?? "Unknown")
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
     }
 
     private async Task AddToCart(ProductResponseDto product)
