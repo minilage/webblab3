@@ -334,3 +334,29 @@ body {
         transform: scale(1.05);
     }
 }
+
+/* =============================
+   GLOBAL PATCH: Dropdown till The Loading Bean-style
+============================= */
+
+.mud-popover {
+    background-color: #fffaf5 !important;
+    color: #1e392a !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+    .mud-popover .mud-list {
+        background-color: #fffaf5 !important;
+    }
+
+    .mud-popover .mud-list-item {
+        background-color: #fffaf5 !important;
+        color: #1e392a !important;
+        font-weight: 500;
+    }
+
+        .mud-popover .mud-list-item:hover {
+            background-color: #e0d2c1 !important;
+            color: #1e392a !important;
+        }

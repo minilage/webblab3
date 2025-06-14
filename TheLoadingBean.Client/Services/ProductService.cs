@@ -26,8 +26,16 @@ namespace TheLoadingBean.Client.Services
 
         public async Task<List<ProductResponseDto>> GetAllProductsAsync()
         {
-            return await _httpClient.GetFromJsonAsync<List<ProductResponseDto>>("api/product")
-                   ?? new List<ProductResponseDto>();
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<ProductResponseDto>>("api/product")
+                       ?? new List<ProductResponseDto>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error fetching products: {ex.Message}");
+                return new List<ProductResponseDto>();
+            }
         }
 
         public async Task<ProductResponseDto> GetProductByIdAsync(string id)

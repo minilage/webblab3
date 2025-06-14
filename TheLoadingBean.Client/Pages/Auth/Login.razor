@@ -6,18 +6,21 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+<MudContainer MaxWidth="MaxWidth.Small" Style="margin-top: 6rem;">
     <MudCard>
         <MudCardContent>
-            <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">Logga in</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Center">Logga in</MudText>
             <EditForm Model="@loginDto" OnValidSubmit="HandleLogin">
                 <DataAnnotationsValidator />
-                <MudTextField T="string" @bind="loginDto.Email" Label="Email" Required="true" RequiredError="Email är obligatoriskt" />
-                <MudTextField T="string" @bind="loginDto.Password" Label="Lösenord" Required="true" RequiredError="Lösenord är obligatoriskt" InputType="InputType.Password" />
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-4">Logga in</MudButton>
+                <MudTextField T="string" @bind-value="loginDto.Email" Label="Email" Required="true" RequiredError="Email är obligatoriskt" />
+                <MudTextField T="string" @bind-value="loginDto.Password" Label="Lösenord" Required="true" RequiredError="Lösenord är obligatoriskt" InputType="InputType.Password" />
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Style="margin-top: 1.5rem;">
+                    Logga in
+                </MudButton>
             </EditForm>
-            <MudText Align="Align.Center" Class="mt-4">
-                Har du inget konto? <MudLink Href="/register">Registrera dig här</MudLink>
+            <MudText Align="Align.Center" Style="margin-top: 1.5rem;">
+                Har du inget konto?
+                <MudLink Href="/register">Registrera dig här</MudLink>
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -28,13 +31,19 @@
 
     private async Task HandleLogin()
     {
+        if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+        {
+            Snackbar.Add("Fyll i både e-post och lösenord", Severity.Warning);
+            return;
+        }
+
         try
         {
             var token = await AuthService.LoginAsync(loginDto);
 
             if (!string.IsNullOrWhiteSpace(token?.Token))
             {
-                Snackbar.Add("Inloggning lyckades!", Severity.Success);
+                Snackbar.Add("Inloggning lyckades", Severity.Success);
                 NavigationManager.NavigateTo("/");
             }
             else
@@ -42,9 +51,9 @@
                 Snackbar.Add("Felaktigt användarnamn eller lösenord", Severity.Error);
             }
         }
-        catch
+        catch (Exception ex)
         {
-            Snackbar.Add("Ett fel uppstod vid inloggning", Severity.Error);
+            Snackbar.Add($"Ett fel uppstod vid inloggning: {ex.Message}", Severity.Error);
         }
     }
-} 
+}

@@ -13,6 +13,7 @@ namespace TheLoadingBeanAPI.Controllers
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductResponseDto>>> GetAllProducts()
         {
             var products = await _unitOfWork.Products.GetAllProductsAsync();
@@ -20,6 +21,7 @@ namespace TheLoadingBeanAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<ProductResponseDto>> GetProduct(string id)
         {
             var product = await _unitOfWork.Products.GetProductByIdAsync(id);
@@ -31,6 +33,7 @@ namespace TheLoadingBeanAPI.Controllers
         }
 
         [HttpGet("search")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductResponseDto>>> SearchProducts([FromQuery] string searchTerm)
         {
             var products = await _unitOfWork.Products.SearchProductsAsync(searchTerm);
@@ -104,6 +107,7 @@ namespace TheLoadingBeanAPI.Controllers
         }
 
         [HttpGet("available")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ProductResponseDto>>> GetAvailableProducts()
         {
             var products = await _unitOfWork.Products.GetAvailableProductsAsync();

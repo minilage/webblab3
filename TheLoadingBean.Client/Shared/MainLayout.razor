@@ -23,7 +23,9 @@
                         <MudNavLink Href="/orders" Class="mx-2">My Orders</MudNavLink>
                     }
 
-                    <MudText Class="mx-3 mt-1 text-white" Typo="Typo.subtitle2">Hi, @context.User.Identity?.Name</MudText>
+                    <MudText Class="mx-3 mt-1 text-white" Typo="Typo.subtitle2">
+                        Hi, @(context?.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "user")
+                    </MudText>
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="HandleLogout" Size="Size.Small" Class="mx-2">Logout</MudButton>
                 </Authorized>
                 <NotAuthorized>
@@ -42,7 +44,7 @@
     <!-- Footer -->
     <div class="footer-wrapper">
         <div class="footer-section text-center">
-            <MudText Typo="Typo.caption">© 2025 The Loading Bean. Coded with ☕ by Tina.</MudText>
+            <MudText Typo="Typo.caption">© 2025 The Loading Bean. Coded with ☕️ & ❤️ by Tina.</MudText>
         </div>
     </div>
 

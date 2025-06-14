@@ -9,15 +9,28 @@
 <PageTitle>Shop</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.False" Class="products-section">
-    <MudText Typo="Typo.h4" Align="Align.Center" Class="page-title">Browse Our Products</MudText>
+    <div class="popular-products-wrapper">
+        <h2 class="popular-title">Browse Our Products</h2>
+    </div>
 
     <!-- Filtersektion -->
-    <div class="products-filter">
-        <MudTextField @bind-Value="searchTerm" Placeholder="Search..."
-                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
+    <div class="products-filter beige-filter">
+        <MudTextField @bind-Value="searchTerm"
+                      Placeholder="Search..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Variant="Variant.Filled"
+                      Color="Color.Primary"
+                      Margin="Margin.Dense"
                       Class="mb-2" />
 
-        <MudSelect T="string" Label="Category" @bind-Value="selectedCategory" Dense Class="mb-2">
+        <MudSelect T="string"
+                   Label="Category"
+                   @bind-Value="selectedCategory"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Margin="Margin.Dense"
+                   Class="mb-2">
             <MudSelectItem Value="@AllCategory">@AllCategory</MudSelectItem>
             @foreach (var category in categories)
             {
@@ -30,14 +43,14 @@
     <MudGrid GutterSize="GutterSize.Small">
         @foreach (var product in FilteredProducts)
         {
-            <MudItem xs="12" sm="6" md="4" lg="2">
+            <MudItem xs="12" sm="6" md="4" lg="2" Class="d-flex">
                 <MudCard Class="product-card">
                     <MudCardMedia Image="@product.ImageUrl" Alt="@product.Name" Class="product-image" />
 
                     <MudCardContent>
                         <MudText Typo="Typo.h6" Class="product-title">@product.Name</MudText>
                         <MudText Typo="Typo.body2">@product.Description</MudText>
-                        <MudText Typo="Typo.subtitle2" Class="product-price">@($"{product.Price} kr")</MudText>
+                        <MudText Typo="Typo.subtitle2" Class="product-price">@($"{product.Price:0.00} kr")</MudText>
                         <MudText Typo="Typo.caption">Category: @product.Category</MudText>
 
                         @if (!product.IsAvailable || product.IsDiscontinued)
@@ -78,19 +91,36 @@
 
     protected override async Task OnInitializedAsync()
     {
-        products = await ProductService.GetAllProductsAsync() ?? new();
-
-        foreach (var p in products)
+        try
         {
-            p.ImageUrl ??= $"/images/{p.Name.Replace(" ", "").ToLower()}.png";
-        }
+            products = await ProductService.GetAllProductsAsync() ?? new();
 
-        categories = products
-            .Select(p => p.Category ?? "Unknown")
-            .Where(c => !string.IsNullOrWhiteSpace(c))
-            .Distinct()
-            .OrderBy(c => c)
-            .ToList();
+            foreach (var p in products)
+            {
+                var fileName = SanitizeFileName(p.Name);
+                p.ImageUrl = $"/images/{fileName}";
+            }
+
+            categories = products
+                .Select(p => p.Category ?? "Unknown")
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .OrderBy(c => c)
+                .ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("FEL: Kunde inte ladda produkter: " + ex.Message);
+            Snackbar.Add("Kunde inte hämta produkter från servern.", Severity.Error);
+        }
+    }
+
+    private string SanitizeFileName(string input)
+    {
+        return new string(input
+            .ToLower()
+            .Where(c => char.IsLetterOrDigit(c))
+            .ToArray()) + ".png";
     }
 
     private async Task AddToCart(ProductResponseDto product)
@@ -99,11 +129,11 @@
 
         if (success)
         {
-            Snackbar.Add($"✅ {product.Name} added to cart!", Severity.Success);
+            Snackbar.Add($"{product.Name} added to cart.", Severity.Success);
         }
         else
         {
-            Snackbar.Add("⚠️ Could not add product to cart.", Severity.Warning);
+            Snackbar.Add("Could not add product to cart.", Severity.Warning);
         }
     }
 }

@@ -6,23 +6,26 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 
-<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+<MudContainer MaxWidth="MaxWidth.Small" Style="margin-top: 6rem;">
     <MudCard>
         <MudCardContent>
-            <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">Registrera</MudText>
+            <MudText Typo="Typo.h4" Align="Align.Center">Registrera dig</MudText>
             <EditForm Model="@registerDto" OnValidSubmit="HandleRegister">
                 <DataAnnotationsValidator />
-                <MudTextField T="string" @bind="registerDto.FirstName" Label="Förnamn" Required="true" RequiredError="Förnamn är obligatoriskt" />
-                <MudTextField T="string" @bind="registerDto.LastName" Label="Efternamn" Required="true" RequiredError="Efternamn är obligatoriskt" />
-                <MudTextField T="string" @bind="registerDto.Email" Label="Email" Required="true" RequiredError="Email är obligatoriskt" />
-                <MudTextField T="string" @bind="registerDto.Phone" Label="Telefon" Required="true" RequiredError="Telefon är obligatoriskt" />
-                <MudTextField T="string" @bind="registerDto.Address" Label="Adress" Required="true" RequiredError="Adress är obligatoriskt" />
-                <MudTextField T="string" @bind="registerDto.Password" Label="Lösenord" Required="true" RequiredError="Lösenord är obligatoriskt" InputType="InputType.Password" />
-                <MudTextField T="string" @bind="registerDto.ConfirmPassword" Label="Bekräfta lösenord" Required="true" RequiredError="Bekräfta lösenord är obligatoriskt" InputType="InputType.Password" />
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-4">Registrera</MudButton>
+                <MudTextField T="string" @bind-value="registerDto.FirstName" Label="Förnamn" Required="true" RequiredError="Förnamn är obligatoriskt" />
+                <MudTextField T="string" @bind-value="registerDto.LastName" Label="Efternamn" Required="true" RequiredError="Efternamn är obligatoriskt" />
+                <MudTextField T="string" @bind-value="registerDto.Email" Label="Email" Required="true" RequiredError="Email är obligatoriskt" />
+                <MudTextField T="string" @bind-value="registerDto.Phone" Label="Telefon" Required="true" RequiredError="Telefon är obligatoriskt" />
+                <MudTextField T="string" @bind-value="registerDto.Address" Label="Adress" Required="true" RequiredError="Adress är obligatoriskt" />
+                <MudTextField T="string" @bind-value="registerDto.Password" Label="Lösenord" Required="true" RequiredError="Lösenord är obligatoriskt" InputType="InputType.Password" />
+                <MudTextField T="string" @bind-value="registerDto.ConfirmPassword" Label="Bekräfta lösenord" Required="true" RequiredError="Bekräfta lösenord är obligatoriskt" InputType="InputType.Password" />
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Style="margin-top: 1.5rem;">
+                    Registrera
+                </MudButton>
             </EditForm>
-            <MudText Align="Align.Center" Class="mt-4">
-                Har du redan ett konto? <MudLink Href="/login">Logga in här</MudLink>
+            <MudText Align="Align.Center" Style="margin-top: 1.5rem;">
+                Har du redan ett konto?
+                <MudLink Href="/login">Logga in här</MudLink>
             </MudText>
         </MudCardContent>
     </MudCard>
@@ -39,7 +42,7 @@
 
             if (!string.IsNullOrWhiteSpace(token?.Token))
             {
-                Snackbar.Add("Registrering lyckades!", Severity.Success);
+                Snackbar.Add("Registrering lyckades", Severity.Success);
                 NavigationManager.NavigateTo("/login");
             }
             else
@@ -52,4 +55,4 @@
             Snackbar.Add("Ett fel uppstod vid registrering", Severity.Error);
         }
     }
-} 
+}

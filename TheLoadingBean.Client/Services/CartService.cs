@@ -1,44 +1,84 @@
-﻿using TheLoadingBean.Shared.DTOs;
+﻿using Blazored.LocalStorage;
+using TheLoadingBean.Shared.DTOs;
 
 namespace TheLoadingBean.Client.Services
 {
     public class CartService : ICartService
     {
-        private readonly List<ProductResponseDto> _cartItems = new();
+        private const string CartKey = "local_cart";
+        private readonly ILocalStorageService _localStorage;
+        private List<ProductResponseDto> _cartItems = new();
 
-        public Task<List<ProductResponseDto>> GetCartItemsAsync()
+        public CartService(ILocalStorageService localStorage)
         {
-            return Task.FromResult(_cartItems.ToList());
+            _localStorage = localStorage;
         }
 
-        public Task<bool> TryAddToCartAsync(ProductResponseDto product)
+        public async Task<List<ProductResponseDto>> GetCartItemsAsync()
+        {
+            _cartItems = await _localStorage.GetItemAsync<List<ProductResponseDto>>(CartKey) ?? new();
+            return _cartItems;
+        }
+
+        public async Task<bool> TryAddToCartAsync(ProductResponseDto product)
         {
             if (product == null || !product.IsAvailable || product.IsDiscontinued)
-                return Task.FromResult(false);
+                return false;
 
-            _cartItems.Add(product);
-            return Task.FromResult(true);
+            _cartItems = await GetCartItemsAsync();
+
+            var existingItem = _cartItems.FirstOrDefault(p => p.Id == product.Id);
+            if (existingItem != null)
+                existingItem.Quantity++;
+            else
+            {
+                product.Quantity = 1;
+                _cartItems.Add(product);
+            }
+
+            await SaveCartAsync();
+            return true;
         }
 
-        public Task RemoveFromCartAsync(string productId)
+        public async Task RemoveFromCartAsync(string productId)
         {
+            _cartItems = await GetCartItemsAsync();
             var item = _cartItems.FirstOrDefault(p => p.Id == productId);
             if (item != null)
                 _cartItems.Remove(item);
 
-            return Task.CompletedTask;
+            await SaveCartAsync();
         }
 
-        public Task ClearCartAsync()
+        public async Task ClearCartAsync()
         {
             _cartItems.Clear();
-            return Task.CompletedTask;
+            await _localStorage.RemoveItemAsync(CartKey);
         }
 
-        public Task<decimal> GetTotalAsync()
+        public async Task<decimal> GetTotalAsync()
         {
-            var total = _cartItems.Sum(p => p.Price);
-            return Task.FromResult(total);
+            _cartItems = await GetCartItemsAsync();
+            return _cartItems.Sum(p => p.Price * p.Quantity);
+        }
+
+        public async Task UpdateQuantityAsync(string productId, int change)
+        {
+            _cartItems = await GetCartItemsAsync();
+            var item = _cartItems.FirstOrDefault(p => p.Id == productId);
+            if (item != null)
+            {
+                item.Quantity += change;
+                if (item.Quantity <= 0)
+                    _cartItems.Remove(item);
+            }
+
+            await SaveCartAsync();
+        }
+
+        private async Task SaveCartAsync()
+        {
+            await _localStorage.SetItemAsync(CartKey, _cartItems);
         }
     }
 }

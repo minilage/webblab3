@@ -2,30 +2,117 @@
    PRODUCTS PAGE STYLES
 ============================= */
 
-/* Sektionens bakgrund och textfärg */
+/* =============================
+   SEKTION: GRUNDLÄGGANDE LAYOUT
+============================= */
 .products-section {
     padding: 2rem 1rem;
     background-color: #3e2723;
     color: #fffaf5;
 }
 
-/* Filtersektionen */
-.products-filter {
-    background-color: #1e392a;
-    color: #fffaf5;
+/* =============================
+   SEKTION: RUBRIKER
+============================= */
+.page-title {
+    font-family: 'Pacifico', cursive;
+    color: #fff0dc;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+}
+
+.popular-products-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.popular-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    color: #fff0dc;
+    text-align: center;
+}
+
+/* =============================
+   SEKTION: FILTER – BEIGE VERSION
+============================= */
+.products-filter.beige-filter {
+    background-color: #ffeacc;
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
+    color: #1e392a;
 }
 
-/* Produktkortens grundstil */
+.products-filter .mud-input-root,
+.products-filter .mud-select {
+    background-color: #fffaf5 !important;
+    color: #1e392a !important;
+    border-radius: 6px;
+    box-shadow: none;
+    border: 1px solid #ccb49c !important;
+}
+
+.products-filter .mud-input-input,
+.products-filter .mud-select-input {
+    color: #1e392a !important;
+}
+
+    .products-filter .mud-input-label,
+    .products-filter .mud-input-input::placeholder,
+    .products-filter .mud-select .mud-input-label {
+        color: #1e392a !important;
+        opacity: 0.85 !important;
+    }
+
+/* =============================
+   DROPDOWN (POPUP MENY)
+============================= */
+.mud-popover {
+    background-color: #fffaf5 !important;
+    color: #1e392a !important;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+    .mud-popover .mud-list {
+        background-color: #fffaf5 !important;
+    }
+
+    .mud-popover .mud-list-item {
+        background-color: #fffaf5 !important;
+        color: #1e392a !important;
+        font-weight: 500;
+    }
+
+        .mud-popover .mud-list-item:hover {
+            background-color: #e0d2c1 !important;
+            color: #1e392a !important;
+        }
+
+/* =============================
+   SEKTION: PRODUKTKORT
+============================= */
+.mud-grid > .mud-item {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Kortens helhet */
 .product-card {
-    background-color: #ffeacc;
+    background-color: #ffeacc !important;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     padding: 1rem;
     text-align: center;
     transition: transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 440px;
+    max-height: 440px;
 }
 
     .product-card:hover {
@@ -33,17 +120,19 @@
         cursor: pointer;
     }
 
-/* Produktbild */
-.product-image {
-    width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
+    /* Bilden hålls proportionerlig och nedskalad */
+    .product-card .mud-card-media,
+    .product-image {
+        flex-shrink: 0;
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
 
-/* Produktnamn */
+/* Text & pris */
 .product-title {
     font-size: 1.2rem;
     font-weight: bold;
@@ -51,14 +140,15 @@
     margin-bottom: 0.25rem;
 }
 
-/* Pris */
 .product-price {
     font-size: 1rem;
     color: #795548;
     margin-bottom: 0.5rem;
 }
 
-/* Responsivitet */
+/* =============================
+   RESPONSIVITET
+============================= */
 @media (max-width: 768px) {
     .product-image {
         max-height: 140px;

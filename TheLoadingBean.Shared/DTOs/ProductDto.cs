@@ -12,6 +12,7 @@ namespace TheLoadingBean.Shared.DTOs
         public string Category { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
         public bool IsDiscontinued { get; set; }
+        public int Quantity { get; set; } = 1;
 
         public string? ImageUrl { get; set; }
 

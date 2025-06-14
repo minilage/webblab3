@@ -1,0 +1,103 @@
+﻿/* =============================
+   CART PAGE STYLES
+============================= */
+
+/* Yttre wrapper runt hela cartsidan (inkl. rubrik + pappret) */
+.cart-page-wrapper {
+    background-color: #1e392a; /* Mörkgrön bakgrund */
+    padding: 3rem 1rem 2rem;
+    border-radius: 12px;
+    max-width: 1000px;
+    margin: 2rem auto;
+}
+
+/* Själva varukorgsdelen */
+.cart-wrapper {
+    width: 100%;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #ffeacc;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Rubriken ovanför */
+.page-title {
+    color: #fcead7; /* Varm ljus text */
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-family: 'Pacifico', cursive;
+    font-size: 2.8rem;
+}
+
+/* Varje produkt rad */
+.cart-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+    .cart-list-item:last-child {
+        border-bottom: none;
+    }
+
+/* Produktnamn + pris */
+.cart-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Knapparna (+, -, delete) */
+.cart-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+/* Totalsumma och knapp */
+.cart-summary {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    text-align: center;
+    padding-bottom: 1rem;
+}
+
+/* Flytta upp knappen lite */
+.cart-wrapper .mud-button {
+    display: block;
+    margin: 1rem auto 0.5rem auto;
+}
+
+/* =============================
+   MOBILRESPONSIVITET
+============================= */
+@media (max-width: 768px) {
+    .cart-page-wrapper {
+        padding: 1.5rem 1rem;
+    }
+
+    .cart-wrapper {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .cart-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cart-controls {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+    }
+
+    .cart-summary {
+        font-size: 1rem;
+    }
+}

@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using TheLoadingBean.Shared.DTOs
 @inject NavigationManager NavigationManager
+@inject ICartService CartService
+@inject ISnackbar Snackbar
 
 <!-- Hero Sektion -->
 <div class="hero-background-wrapper">
@@ -10,7 +12,7 @@
             <div class="hero-text-wrapper">
                 <h1 class="hero-title">Welcome to The Loading Bean</h1>
                 <p class="hero-subtitle">We blend coffee, code and cozy vibes for night owls and creators</p>
-                <p class="hero-caption">Fuel your late-night sessions – one cup at a time.</p>
+                <p class="hero-caption">Fuel your late-night sessions - one cup at a time.</p>
                 <MudButton Variant="Variant.Filled" Class="hero-button" OnClick="@(() => NavigationManager.NavigateTo("/products"))">
                     Explore Our Products
                 </MudButton>
@@ -20,7 +22,7 @@
 </div>
 
 <!-- Produktsektion -->
-<MudContainer MaxWidth="MaxWidth.False" Class="mt-6">
+<MudContainer MaxWidth="MaxWidth.False" Style="margin-top: 2rem;">
     <div class="popular-products-wrapper">
         <h2 class="popular-title">Popular Products</h2>
     </div>
@@ -29,11 +31,12 @@
         @foreach (var product in SampleProducts.Take(3))
         {
             <MudItem xs="12" sm="6" md="4">
-                <div class="home-card mb-4">
-                    <img src="@product.ImageUrl" alt="@product.Name" class="product-image" />
+                <div class="home-card" style="margin-bottom: 1.5rem;">
+                    <img src="@product.ImageUrl" alt="Product image" class="product-image" />
                     <MudText Typo="Typo.h6">@product.Name</MudText>
-                    <MudText Typo="Typo.body2" Class="mb-2">@product.Description</MudText>
-                    <MudButton Variant="Variant.Outlined" Size="Size.Small">
+                    <MudText Typo="Typo.body2">@product.Description</MudText>
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">@($"{product.Price:F2} kr")</MudText>
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => AddToCart(product))">
                         Add to Cart
                     </MudButton>
                 </div>
@@ -45,8 +48,30 @@
 @code {
     private List<ProductDto> SampleProducts = new()
     {
-        new() { Name = "Mana Brew", Description = "Magical coffee for night coders.", ImageUrl = "/images/manabrew.png" },
-        new() { Name = "Nerd Roast", Description = "A dark roast with a hint of pixel.", ImageUrl = "/images/nerdroast.png" },
-        new() { Name = "Pixel Mug", Description = "Retro coffee mug for the true geek.", ImageUrl = "/images/pixelmug.png" }
+        new() { Name = "Mana Brew", Description = "Magical coffee for night coders.", Price = 99.00M, ImageUrl = "/images/manabrew.png" },
+        new() { Name = "Nerd Roast", Description = "A dark roast with a hint of pixel.", Price = 89.90M, ImageUrl = "/images/nerdroast.png" },
+        new() { Name = "Pixelmugg", Description = "Retro coffee mug for the true geek.", Price = 129.00M, ImageUrl = "/images/pixelmugg.png" }
     };
+
+    private async Task AddToCart(ProductDto product)
+    {
+        var dto = new ProductResponseDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            Category = "Unknown",
+            IsAvailable = true,
+            IsDiscontinued = false,
+            ImageUrl = product.ImageUrl
+        };
+
+        var success = await CartService.TryAddToCartAsync(dto);
+
+        if (success)
+            Snackbar.Add($"{product.Name} added to cart!", Severity.Success);
+        else
+            Snackbar.Add("Could not add product.", Severity.Warning);
+    }
 }

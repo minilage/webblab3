@@ -10,11 +10,13 @@
 @inject IDialogService DialogService
 @attribute [Authorize(Roles = "Admin")]
 
-<MudContainer MaxWidth="MaxWidth.Large" Class="mt-16">
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 6rem;">
     <MudCard>
         <MudCardContent>
-            <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">Produkthantering</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog" Class="mb-4">Lägg till produkt</MudButton>
+            <MudText Typo="Typo.h4" Align="Align.Center">Produkthantering</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddDialog" Style="margin-bottom: 1.5rem;">
+                Lägg till produkt
+            </MudButton>
             <MudTable Items="@products" Dense="true" Hover="true" Bordered="true" Striped="true">
                 <HeaderContent>
                     <MudTh>Namn</MudTh>
@@ -30,7 +32,7 @@
                     <MudTd DataLabel="Pris">@context.Price.ToString("C")</MudTd>
                     <MudTd DataLabel="Kategori">@context.Category</MudTd>
                     <MudTd DataLabel="Status">
-                        <MudChip T="bool" Color="@(context.IsDiscontinued ? Color.Error : Color.Success)" Size="Size.Small">
+                        <MudChip T="bool" Color="@(context.IsDiscontinued? Color.Error: Color.Success)" Size="Size.Small">
                             @(context.IsDiscontinued ? "Utsålt" : "Tillgänglig")
                         </MudChip>
                     </MudTd>
@@ -90,15 +92,15 @@
         if (product is null) return;
 
         var updateDto = new UpdateProductDto
-            {
-                ProductNumber = product.ProductNumber,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Category = product.Category,
-                IsAvailable = product.IsAvailable,
-                IsDiscontinued = product.IsDiscontinued
-            };
+        {
+            ProductNumber = product.ProductNumber,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            Category = product.Category,
+            IsAvailable = product.IsAvailable,
+            IsDiscontinued = product.IsDiscontinued
+        };
 
         var parameters = new DialogParameters { ["Product"] = updateDto };
         var dialog = await DialogService.ShowAsync<ProductDialog>("Redigera produkt", parameters);

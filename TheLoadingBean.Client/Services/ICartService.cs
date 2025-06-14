@@ -9,5 +9,7 @@ namespace TheLoadingBean.Client.Services
         Task RemoveFromCartAsync(string productId);
         Task ClearCartAsync();
         Task<decimal> GetTotalAsync();
+        Task UpdateQuantityAsync(string productId, int change);
+
     }
 }
