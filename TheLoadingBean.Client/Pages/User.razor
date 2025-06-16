@@ -1,0 +1,82 @@
+﻿@page "/user"
+@using TheLoadingBean.Shared.DTOs
+@using TheLoadingBean.Client.Services
+@inject IAuthService AuthService
+@inject IOrderService OrderService
+@inject ICartService CartService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mb-6">
+
+    <MudCard Class="mb-4">
+        <MudCardContent>
+            <MudText Typo="Typo.h5" Class="mb-2">Your Profile</MudText>
+            <MudDivider Class="my-2" />
+
+            @if (user is not null)
+            {
+                <MudText><b>Name:</b> @user.FirstName @user.LastName</MudText>
+                <MudText><b>Email:</b> @user.Email</MudText>
+                <MudText><b>Phone:</b> @user.Phone</MudText>
+                <MudText><b>Address:</b> @user.Address</MudText>
+            }
+            else
+            {
+                <MudText>Loading user information...</MudText>
+            }
+        </MudCardContent>
+    </MudCard>
+
+    <MudCard Class="mb-4">
+        <MudCardContent>
+            <MudText Typo="Typo.h5" Class="mb-2">Order History</MudText>
+            <MudDivider Class="my-2" />
+
+            @if (orders is null || orders.Count == 0)
+            {
+                <MudText>You have not placed any orders yet.</MudText>
+            }
+            else
+            {
+                @foreach (var order in orders)
+                {
+                    <MudPaper Class="mb-3 p-3" Elevation="1">
+                        <MudText><b>Order ID:</b> @order.Id</MudText>
+                        <MudText><b>Date:</b> @order.OrderDate.ToShortDateString()</MudText>
+                        <MudText><b>Total:</b> @($"{order.TotalAmount:F2} kr")</MudText>
+
+                        <MudList T="object" Dense="true">
+                            @foreach (var item in order.Items)
+                            {
+                                <MudListItem T="object">
+                                    <MudText>
+                                        <b>Product ID:</b> @item.ProductId — <b>Qty:</b> @item.Quantity × @($"{item.UnitPrice:F2} kr")
+                                    </MudText>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudPaper>
+                }
+            }
+        </MudCardContent>
+    </MudCard>
+
+</MudContainer>
+
+@code {
+    private CustomerResponseDto? user;
+    private List<OrderResponseDto> orders = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            user = await AuthService.GetCurrentUserAsync();
+            orders = await OrderService.GetOrdersByUserAsync() ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Could not load user data: " + ex.Message, Severity.Error);
+        }
+    }
+}

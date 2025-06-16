@@ -12,22 +12,36 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7102/") });
-
-// Add MudBlazor services
-builder.Services.AddMudServices();
-
-// Add Blazored packages
+// Blazored
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredToast();
 
-// Add authentication services
+// MudBlazor
+builder.Services.AddMudServices();
+
+// HttpClient med vår custom AuthorizationMessageHandler
+builder.Services.AddScoped(sp =>
+{
+    var localStorage = sp.GetRequiredService<ILocalStorageService>();
+    var handler = new AuthorizationMessageHandler(localStorage)
+    {
+        InnerHandler = new HttpClientHandler()
+    };
+
+    return new HttpClient(handler)
+    {
+        BaseAddress = new Uri("https://localhost:7102/")
+    };
+});
+
+// Applikationstjänster
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
-// Add authorization
+// Autentisering
 builder.Services.AddAuthorizationCore();
 
 await builder.Build().RunAsync();

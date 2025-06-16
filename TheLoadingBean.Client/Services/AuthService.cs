@@ -15,6 +15,7 @@ namespace TheLoadingBean.Client.Services
         bool IsAuthenticated { get; }
         bool IsAdmin { get; }
         string UserId { get; }
+        Task<CustomerResponseDto> GetCurrentUserAsync();
     }
 
     public class AuthService : IAuthService
@@ -23,7 +24,7 @@ namespace TheLoadingBean.Client.Services
         private readonly ILocalStorageService _localStorage;
         private readonly IToastService _toastService;
         private readonly CustomAuthStateProvider _authStateProvider;
-        private readonly string _baseUrl = "api/auth/";
+        private const string BaseUrl = "api/auth/";
 
         public AuthService(
             HttpClient httpClient,
@@ -39,7 +40,7 @@ namespace TheLoadingBean.Client.Services
 
         public async Task<TokenDto> LoginAsync(LoginDto loginDto)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}login", loginDto);
+            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}login", loginDto);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -48,9 +49,7 @@ namespace TheLoadingBean.Client.Services
                 throw new Exception("Login failed");
             }
 
-            var token = await response.Content.ReadFromJsonAsync<TokenDto>();
-            if (token is null)
-                throw new Exception("Token is null");
+            var token = await response.Content.ReadFromJsonAsync<TokenDto>() ?? throw new Exception("Token is null");
 
             await _localStorage.SetItemAsync("authToken", token.Token);
             await _localStorage.SetItemAsync("tokenExpiration", token.Expiration);
@@ -62,7 +61,7 @@ namespace TheLoadingBean.Client.Services
 
         public async Task<TokenDto> RegisterAsync(RegisterDto registerDto)
         {
-            var response = await _httpClient.PostAsJsonAsync($"{_baseUrl}register", registerDto);
+            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}register", registerDto);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -71,9 +70,7 @@ namespace TheLoadingBean.Client.Services
                 throw new Exception("Registration failed");
             }
 
-            var token = await response.Content.ReadFromJsonAsync<TokenDto>();
-            if (token is null)
-                throw new Exception("Token is null");
+            var token = await response.Content.ReadFromJsonAsync<TokenDto>() ?? throw new Exception("Token is null");
 
             await _localStorage.SetItemAsync("authToken", token.Token);
             await _localStorage.SetItemAsync("tokenExpiration", token.Expiration);
@@ -89,6 +86,18 @@ namespace TheLoadingBean.Client.Services
             await _localStorage.RemoveItemAsync("tokenExpiration");
             _authStateProvider.NotifyUserLogout();
             _toastService.ShowSuccess("Utloggning lyckades!");
+        }
+
+        public async Task<CustomerResponseDto> GetCurrentUserAsync()
+        {
+            var userId = UserId;
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new Exception("User ID is missing.");
+
+            var response = await _httpClient.GetFromJsonAsync<CustomerResponseDto>($"api/customer/{userId}")
+                ?? throw new Exception("User not found.");
+
+            return response;
         }
 
         public bool IsAuthenticated => _authStateProvider.IsAuthenticated;

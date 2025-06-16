@@ -45,7 +45,9 @@
         {
             <MudItem xs="12" sm="6" md="4" lg="2" Class="d-flex">
                 <MudCard Class="product-card">
-                    <MudCardMedia Image="@product.ImageUrl" Alt="@product.Name" Class="product-image" />
+                    <MudCardMedia Image="@(string.IsNullOrWhiteSpace(product.ImageUrl) ? "/images/fallback.png" : product.ImageUrl)"
+                                  Alt="@product.Name"
+                                  Class="product-image" />
 
                     <MudCardContent>
                         <MudText Typo="Typo.h6" Class="product-title">@product.Name</MudText>
@@ -98,6 +100,7 @@
             foreach (var p in products)
             {
                 var fileName = SanitizeFileName(p.Name);
+                Console.WriteLine($"Produktnamn: {p.Name} → Filnamn: {fileName}");
                 p.ImageUrl = $"/images/{fileName}";
             }
 
