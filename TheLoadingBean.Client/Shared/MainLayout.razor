@@ -13,20 +13,16 @@
             <MudNavLink Href="/cart" Class="mx-2">Cart</MudNavLink>
 
             <AuthorizeView>
-                <Authorized>
-                    @if (AuthService.IsAdmin)
+                <Authorized Context="context">
+                    @if (isAdmin)
                     {
                         <MudNavLink Href="/admin" Class="mx-2">Admin</MudNavLink>
                     }
                     else
                     {
                         <MudNavLink Href="/user" Class="mx-2">Profile</MudNavLink>
-
                     }
 
-                    <MudText Class="mx-3 mt-1 text-white" Typo="Typo.subtitle2">
-                        Hi, @(context?.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : "user")
-                    </MudText>
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="HandleLogout" Size="Size.Small" Class="mx-2">Logout</MudButton>
                 </Authorized>
                 <NotAuthorized>
@@ -52,6 +48,13 @@
 </MudLayout>
 
 @code {
+    private bool isAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAdmin = await AuthService.IsAdminAsync();
+    }
+
     private async Task HandleLogout()
     {
         await AuthService.LogoutAsync();

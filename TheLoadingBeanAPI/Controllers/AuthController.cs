@@ -24,14 +24,10 @@ namespace TheLoadingBeanAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<TokenDto>> Register(RegisterDto registerDto)
         {
-            // Check if user already exists
             var existingCustomer = await _unitOfWork.Customers.GetCustomerByEmailAsync(registerDto.Email);
             if (existingCustomer != null)
-            {
                 return BadRequest("A user with this email already exists.");
-            }
 
-            // Create new customer
             var customer = new Customer
             {
                 FirstName = registerDto.FirstName,
@@ -39,48 +35,50 @@ namespace TheLoadingBeanAPI.Controllers
                 Email = registerDto.Email,
                 Phone = registerDto.Phone,
                 Address = registerDto.Address,
-                PasswordHash = HashPassword(registerDto.Password)
+                PasswordHash = HashPassword(registerDto.Password),
+                IsAdmin = false
             };
 
             await _unitOfWork.Customers.CreateCustomerAsync(customer);
             await _unitOfWork.SaveChangesAsync();
 
-            // Generate token
             var token = _jwtService.GenerateToken(customer.Id, customer.Email, "Customer");
-            return Ok(token);
+
+            return Ok(new TokenDto
+            {
+                Token = token.Token,
+                Expiration = token.Expiration,
+                Email = customer.Email,
+                IsAdmin = customer.IsAdmin
+            });
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<TokenDto>> Login(LoginDto loginDto)
         {
             var customer = await _unitOfWork.Customers.GetCustomerByEmailAsync(loginDto.Email);
-            if (customer == null)
-            {
+            if (customer == null || !VerifyPassword(loginDto.Password, customer.PasswordHash))
                 return Unauthorized("Invalid email or password.");
-            }
 
-            if (!VerifyPassword(loginDto.Password, customer.PasswordHash))
+            var role = customer.IsAdmin ? "Admin" : "Customer";
+            var token = _jwtService.GenerateToken(customer.Id, customer.Email, role);
+
+            return Ok(new TokenDto
             {
-                return Unauthorized("Invalid email or password.");
-            }
-
-            // Generate token
-            var token = _jwtService.GenerateToken(customer.Id, customer.Email, "Customer");
-            return Ok(token);
+                Token = token.Token,
+                Expiration = token.Expiration,
+                Email = customer.Email,
+                IsAdmin = customer.IsAdmin
+            });
         }
 
-        //[Authorize(Roles = "Admin")]
         [HttpPost("admin/register")]
         public async Task<ActionResult<TokenDto>> RegisterAdmin(RegisterDto registerDto)
         {
-            // Check if user already exists
             var existingCustomer = await _unitOfWork.Customers.GetCustomerByEmailAsync(registerDto.Email);
             if (existingCustomer != null)
-            {
                 return BadRequest("A user with this email already exists.");
-            }
 
-            // Create new admin
             var customer = new Customer
             {
                 FirstName = registerDto.FirstName,
@@ -95,9 +93,15 @@ namespace TheLoadingBeanAPI.Controllers
             await _unitOfWork.Customers.CreateCustomerAsync(customer);
             await _unitOfWork.SaveChangesAsync();
 
-            // Generate token
             var token = _jwtService.GenerateToken(customer.Id, customer.Email, "Admin");
-            return Ok(token);
+
+            return Ok(new TokenDto
+            {
+                Token = token.Token,
+                Expiration = token.Expiration,
+                Email = customer.Email,
+                IsAdmin = customer.IsAdmin
+            });
         }
 
         private static string HashPassword(string password)

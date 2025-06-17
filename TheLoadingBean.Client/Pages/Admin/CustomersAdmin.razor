@@ -1,0 +1,12 @@
+﻿@page "/admin/customers"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
+    <MudPaper Class="p-4" Elevation="1">
+        <MudText Typo="Typo.h5">Customer Management</MudText>
+        <MudDivider Class="my-2" />
+        <MudText>This is the customer management page for admins.</MudText>
+    </MudPaper>
+</MudContainer>

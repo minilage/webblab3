@@ -1,0 +1,34 @@
+﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
+
+    <MudPaper Class="p-4" Elevation="2">
+        <MudText Typo="Typo.h4" Class="mb-2">Admin Panel</MudText>
+        <MudDivider Class="mb-4" />
+
+        <MudText Typo="Typo.body1">
+            Welcome, Admin! From here you can manage:
+        </MudText>
+
+        <MudList T="string" Class="mt-2">
+            <MudListItem T="string" Href="/admin/customers">
+                <MudText>🧑 Customers</MudText>
+            </MudListItem>
+            <MudListItem T="string" Href="/admin/orders">
+                <MudText>📦 Orders</MudText>
+            </MudListItem>
+            <MudListItem T="string" Href="/admin/product-info">
+                <MudText>☕ Product Inventory</MudText>
+            </MudListItem>
+        </MudList>
+
+        <MudAlert Severity="Severity.Info" Class="mt-4">
+            This page is only accessible to users with the "Admin" role.
+        </MudAlert>
+    </MudPaper>
+
+</MudContainer>

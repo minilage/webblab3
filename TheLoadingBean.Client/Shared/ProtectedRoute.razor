@@ -4,30 +4,27 @@
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
-<AuthorizeView Roles="@Roles">
-    <Authorized>
-        @ChildContent
-    </Authorized>
-    <NotAuthorized>
-        @if (!AuthService.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/login");
-        }
-        else
-        {
-            <div class="container mt-5">
-                <div class="alert alert-danger">
-                    <h4 class="alert-heading">Access Denied</h4>
-                    <p>You don't have permission to access this page.</p>
-                    <hr>
-                    <p class="mb-0">
-                        <a href="/" class="btn btn-primary">Return to Home</a>
-                    </p>
-                </div>
-            </div>
-        }
-    </NotAuthorized>
-</AuthorizeView>
+@if (isAuthorized)
+{
+    @ChildContent
+}
+else if (checkedAuth && !isAuthenticated)
+{
+    NavigationManager.NavigateTo("/login");
+}
+else if (checkedAuth && !isAuthorized)
+{
+    <div class="container mt-5">
+        <div class="alert alert-danger">
+            <h4 class="alert-heading">Access Denied</h4>
+            <p>You don't have permission to access this page.</p>
+            <hr>
+            <p class="mb-0">
+                <a href="/" class="btn btn-primary">Return to Home</a>
+            </p>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -35,4 +32,24 @@
 
     [Parameter]
     public string? Roles { get; set; }
+
+    private bool isAuthenticated = false;
+    private bool isAuthorized = false;
+    private bool checkedAuth = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.IsAuthenticatedAsync();
+        checkedAuth = true;
+
+        if (!string.IsNullOrWhiteSpace(Roles))
+        {
+            var userIsAdmin = await AuthService.IsAdminAsync();
+            isAuthorized = Roles.Contains("Admin") ? userIsAdmin : true;
+        }
+        else
+        {
+            isAuthorized = isAuthenticated;
+        }
+    }
 }

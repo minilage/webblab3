@@ -12,9 +12,9 @@ namespace TheLoadingBean.Client.Services
         Task<TokenDto> LoginAsync(LoginDto loginDto);
         Task<TokenDto> RegisterAsync(RegisterDto registerDto);
         Task LogoutAsync();
-        bool IsAuthenticated { get; }
-        bool IsAdmin { get; }
-        string UserId { get; }
+        Task<bool> IsAuthenticatedAsync();
+        Task<bool> IsAdminAsync();
+        Task<string> GetUserIdAsync();
         Task<CustomerResponseDto> GetCurrentUserAsync();
     }
 
@@ -90,7 +90,7 @@ namespace TheLoadingBean.Client.Services
 
         public async Task<CustomerResponseDto> GetCurrentUserAsync()
         {
-            var userId = UserId;
+            var userId = await GetUserIdAsync();
             if (string.IsNullOrWhiteSpace(userId))
                 throw new Exception("User ID is missing.");
 
@@ -100,8 +100,19 @@ namespace TheLoadingBean.Client.Services
             return response;
         }
 
-        public bool IsAuthenticated => _authStateProvider.IsAuthenticated;
-        public bool IsAdmin => _authStateProvider.IsAdmin;
-        public string UserId => _authStateProvider.UserId;
+        public async Task<bool> IsAuthenticatedAsync()
+        {
+            return await _authStateProvider.GetIsAuthenticatedAsync();
+        }
+
+        public async Task<bool> IsAdminAsync()
+        {
+            return await _authStateProvider.GetIsAdminAsync();
+        }
+
+        public async Task<string> GetUserIdAsync()
+        {
+            return await _authStateProvider.GetUserIdAsync();
+        }
     }
 }

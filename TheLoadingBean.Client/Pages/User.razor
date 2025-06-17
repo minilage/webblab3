@@ -1,12 +1,20 @@
 ﻿@page "/user"
+@using Microsoft.AspNetCore.Authorization
 @using TheLoadingBean.Shared.DTOs
 @using TheLoadingBean.Client.Services
+@attribute [Authorize]
 @inject IAuthService AuthService
 @inject IOrderService OrderService
 @inject ICartService CartService
 @inject ISnackbar Snackbar
+@inject HttpClient Http
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6 mb-6">
+
+    @if (user is not null)
+    {
+        <MudText Typo="Typo.h4" Class="mb-4 text-center">Hi, @user.FirstName!</MudText>
+    }
 
     <MudCard Class="mb-4">
         <MudCardContent>
@@ -15,10 +23,17 @@
 
             @if (user is not null)
             {
-                <MudText><b>Name:</b> @user.FirstName @user.LastName</MudText>
-                <MudText><b>Email:</b> @user.Email</MudText>
-                <MudText><b>Phone:</b> @user.Phone</MudText>
-                <MudText><b>Address:</b> @user.Address</MudText>
+                <MudForm @ref="form">
+                    <MudTextField @bind-Value="updateModel.FirstName" Label="First Name" Required="true" />
+                    <MudTextField @bind-Value="updateModel.LastName" Label="Last Name" Required="true" />
+                    <MudTextField @bind-Value="updateModel.Email" Label="Email" Required="true" />
+                    <MudTextField @bind-Value="updateModel.Phone" Label="Phone" Required="true" />
+                    <MudTextField @bind-Value="updateModel.Address" Label="Address" Required="true" />
+
+                    <MudButton OnClick="UpdateCustomer" Color="Color.Primary" Variant="Variant.Filled" Class="mt-3">
+                        Update Info
+                    </MudButton>
+                </MudForm>
             }
             else
             {
@@ -66,6 +81,8 @@
 @code {
     private CustomerResponseDto? user;
     private List<OrderResponseDto> orders = new();
+    private UpdateCustomerDto updateModel = new();
+    private MudForm? form;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,10 +90,48 @@
         {
             user = await AuthService.GetCurrentUserAsync();
             orders = await OrderService.GetOrdersByUserAsync() ?? new();
+
+            if (user is not null)
+            {
+                updateModel = new UpdateCustomerDto
+                {
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Phone = user.Phone,
+                    Address = user.Address
+                };
+            }
         }
         catch (Exception ex)
         {
             Snackbar.Add("Could not load user data: " + ex.Message, Severity.Error);
+        }
+    }
+
+    private async Task UpdateCustomer()
+    {
+        if (user is null)
+            return;
+
+        await form!.Validate();
+
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"api/customer/{user.Id}", updateModel);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Profile updated successfully!", Severity.Success);
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Snackbar.Add($"Update failed: {error}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Something went wrong: {ex.Message}", Severity.Error);
         }
     }
 }

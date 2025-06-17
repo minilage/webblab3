@@ -9,17 +9,16 @@ namespace TheLoadingBean.Client.Auth
     {
         private readonly ILocalStorageService _localStorage;
         private readonly ClaimsPrincipal _anonymous = new(new ClaimsIdentity());
-
         private ClaimsPrincipal _currentUser = new(new ClaimsIdentity());
-
-        public bool IsAuthenticated => _currentUser.Identity?.IsAuthenticated ?? false;
-        public bool IsAdmin => _currentUser.IsInRole("Admin");
-        public string UserId => _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
         public CustomAuthStateProvider(ILocalStorageService localStorage)
         {
             _localStorage = localStorage;
         }
+
+        public bool IsAuthenticated => _currentUser.Identity?.IsAuthenticated ?? false;
+        public bool IsAdmin => _currentUser.IsInRole("Admin");
+        public string UserId => _currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
@@ -44,6 +43,7 @@ namespace TheLoadingBean.Client.Auth
             var user = new ClaimsPrincipal(identity);
 
             _currentUser = user;
+
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
         }
 
@@ -53,8 +53,25 @@ namespace TheLoadingBean.Client.Auth
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
         }
 
-        private List<Claim> ParseClaimsFromJwt(string jwt)
+        public async Task<bool> GetIsAuthenticatedAsync()
+        {
+            var state = await GetAuthenticationStateAsync();
+            return state.User.Identity?.IsAuthenticated ?? false;
+        }
 
+        public async Task<bool> GetIsAdminAsync()
+        {
+            var state = await GetAuthenticationStateAsync();
+            return state.User.IsInRole("Admin");
+        }
+
+        public async Task<string> GetUserIdAsync()
+        {
+            var state = await GetAuthenticationStateAsync();
+            return state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
+        }
+
+        private List<Claim> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();
             var payload = jwt.Split('.')[1];
