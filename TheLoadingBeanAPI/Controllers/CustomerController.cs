@@ -135,6 +135,37 @@ namespace TheLoadingBeanAPI.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/make-admin")]
+        public async Task<IActionResult> MakeAdmin(string id)
+        {
+            var customer = await _unitOfWork.Customers.GetCustomerByIdAsync(id);
+            if (customer == null)
+                return NotFound();
+
+            customer.IsAdmin = true;
+            await _unitOfWork.Customers.UpdateCustomerAsync(id, customer);
+            await _unitOfWork.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/toggle-admin")]
+        public async Task<IActionResult> ToggleAdmin(string id)
+        {
+            var customer = await _unitOfWork.Customers.GetCustomerByIdAsync(id);
+            if (customer == null)
+                return NotFound();
+
+            customer.IsAdmin = !customer.IsAdmin;
+
+            await _unitOfWork.Customers.UpdateCustomerAsync(id, customer);
+            await _unitOfWork.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private static CustomerResponseDto MapToResponseDto(Customer customer)
         {
             return new CustomerResponseDto
@@ -144,7 +175,8 @@ namespace TheLoadingBeanAPI.Controllers
                 LastName = customer.LastName,
                 Email = customer.Email,
                 Phone = customer.Phone,
-                Address = customer.Address
+                Address = customer.Address,
+                IsAdmin = customer.IsAdmin
             };
         }
     }

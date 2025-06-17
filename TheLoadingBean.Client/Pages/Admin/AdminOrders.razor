@@ -1,0 +1,105 @@
+﻿@page "/admin/orders"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using TheLoadingBean.Client.Services
+@using TheLoadingBean.Shared.Models
+@using TheLoadingBean.Shared.DTOs
+@inject NavigationManager Navigation
+@inject IOrderService OrderService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
+    <MudPaper Class="p-4" Elevation="2">
+        <MudText Typo="Typo.h4" Class="mb-3">Order Management</MudText>
+
+        <MudTextField @bind-Value="searchTerm" Placeholder="Search by customer ID..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
+
+        <MudTable Items="@filteredOrders" Dense="true" Hover="true" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Order ID</MudTh>
+                <MudTh>Customer ID</MudTh>
+                <MudTh>Date</MudTh>
+                <MudTh>Total</MudTh>
+                <MudTh>Status</MudTh>
+                <MudTh>Items</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Order ID">@context.Id</MudTd>
+                <MudTd DataLabel="Customer ID">@context.CustomerId</MudTd>
+                <MudTd DataLabel="Date">@context.OrderDate.ToShortDateString()</MudTd>
+                <MudTd DataLabel="Total">@($"{context.TotalAmount:0.00} kr")</MudTd>
+                <MudTd DataLabel="Status">
+                    <MudSelect T="OrderStatus"
+                               @bind-Value="context.Status"
+                               Dense="true"
+                               OnValueChanged="async e => await UpdateOrderStatus(context.Id, e.Value)">
+                        @foreach (var status in Enum.GetValues<OrderStatus>())
+                        {
+                            <MudSelectItem Value="@status">@status</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudTd>
+                <MudTd>
+                    <MudExpansionPanels Elevation="0">
+                        <MudExpansionPanel Text="Show Items">
+                            <MudList T="OrderItemDto" Dense="true">
+                                @foreach (var item in context.Items)
+                                {
+                                    <MudListItem>
+                                        <MudText><b>@item.ProductId</b> — @item.Quantity × @($"{item.UnitPrice:0.00} kr")</MudText>
+                                    </MudListItem>
+                                }
+                            </MudList>
+                        </MudExpansionPanel>
+                    </MudExpansionPanels>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+
+    <MudDivider Class="my-4" />
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Secondary"
+               Variant="Variant.Filled"
+               OnClick="@(() => Navigation.NavigateTo("/admin"))">
+        Tillbaka till adminpanelen
+    </MudButton>
+
+</MudContainer>
+
+@code {
+    private List<OrderResponseDto> allOrders = new();
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<OrderResponseDto> filteredOrders =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? allOrders
+            : allOrders.Where(o => o.CustomerId.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            allOrders = await OrderService.GetAllOrdersAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Could not load orders: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task UpdateOrderStatus(string orderId, OrderStatus newStatus)
+    {
+        try
+        {
+            await OrderService.UpdateOrderStatusAsync(orderId, newStatus);
+            Snackbar.Add("Order status updated.", Severity.Success);
+            allOrders = await OrderService.GetAllOrdersAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update status: {ex.Message}", Severity.Error);
+        }
+    }
+}

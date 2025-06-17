@@ -145,6 +145,22 @@ namespace TheLoadingBeanAPI.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateOrderStatus(string id, [FromBody] OrderStatus status)
+        {
+            var order = await _unitOfWork.Orders.GetOrderByIdAsync(id);
+            if (order == null)
+                return NotFound();
+
+            order.Status = status;
+
+            await _unitOfWork.Orders.UpdateOrderAsync(id, order);
+            await _unitOfWork.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private static OrderResponseDto MapToResponseDto(Order order)
         {
             return new OrderResponseDto

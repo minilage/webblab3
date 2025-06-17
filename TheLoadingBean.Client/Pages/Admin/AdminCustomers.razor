@@ -1,0 +1,77 @@
+﻿@page "/admin/customers"
+@using TheLoadingBean.Client.Services
+@using Microsoft.AspNetCore.Authorization
+@using TheLoadingBean.Shared.DTOs
+@using MudBlazor
+@attribute [Authorize(Roles = "Admin")]
+@inject NavigationManager Navigation
+@inject ICustomerService CustomerService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
+    <MudPaper Class="p-4" Elevation="1">
+        <MudText Typo="Typo.h5">Customer Management</MudText>
+        <MudDivider Class="my-2" />
+
+        <MudTextField @bind-Value="searchTerm" Placeholder="Sök e-post..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
+
+        <MudTable Items="@filteredCustomers" Dense="true" Hover="true" Bordered="true" Striped="true">
+            <HeaderContent>
+                <MudTh>Förnamn</MudTh>
+                <MudTh>Efternamn</MudTh>
+                <MudTh>E-post</MudTh>
+                <MudTh>Telefon</MudTh>
+                <MudTh>Admin</MudTh>
+                <MudTh>Actions</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.FirstName</MudTd>
+                <MudTd>@context.LastName</MudTd>
+                <MudTd>@context.Email</MudTd>
+                <MudTd>@context.Phone</MudTd>
+                <MudTd>
+                    <MudChip T="bool" Color="@(context.IsAdmin? Color.Success: Color.Default)">
+                        @(context.IsAdmin ? "Ja" : "Nej")
+                    </MudChip>
+                </MudTd>
+                <MudTd>
+                    <MudIconButton Icon="@(context.IsAdmin ? Icons.Material.Filled.AdminPanelSettings : Icons.Material.Filled.Security)"
+                                   OnClick="() => ToggleAdmin(context.Id)"
+                                   Color="@(context.IsAdmin ? Color.Warning : Color.Primary)"
+                                   Title="Toggle admin status" />
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+
+    <MudDivider Class="my-4" />
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Secondary"
+               Variant="Variant.Filled"
+               OnClick="@(() => Navigation.NavigateTo("/admin"))">
+        Tillbaka till adminpanelen
+    </MudButton>
+
+</MudContainer>
+
+@code {
+    private List<CustomerResponseDto> customers = new();
+    private string searchTerm = string.Empty;
+
+    private IEnumerable<CustomerResponseDto> filteredCustomers =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? customers
+            : customers.Where(c => c.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await CustomerService.GetAllCustomersAsync();
+    }
+
+    private async Task ToggleAdmin(string customerId)
+    {
+        var result = await CustomerService.ToggleAdminAsync(customerId);
+        Snackbar.Add(result ? "Admin-status uppdaterad!" : "Misslyckades att uppdatera", result ? Severity.Success : Severity.Error);
+        customers = await CustomerService.GetAllCustomersAsync();
+    }
+}

@@ -44,6 +44,15 @@
             </MudTable>
         </MudCardContent>
     </MudCard>
+
+    <MudDivider Class="my-4" />
+    <MudButton StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Secondary"
+               Variant="Variant.Filled"
+               OnClick="@(() => NavigationManager.NavigateTo("/admin"))">
+        Tillbaka till adminpanelen
+    </MudButton>
+
 </MudContainer>
 
 @code {
