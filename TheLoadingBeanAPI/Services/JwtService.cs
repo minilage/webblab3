@@ -1,39 +1,38 @@
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using TheLoadingBean.Shared.DTOs;
 
 namespace TheLoadingBeanAPI.Services
 {
     public class JwtService : IJwtService
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _config;
         private readonly string _secretKey;
         private readonly string _issuer;
         private readonly string _audience;
         private readonly int _expirationMinutes;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IConfiguration config)
         {
-            _configuration = configuration;
-            _secretKey = _configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey is not configured");
-            _issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer is not configured");
-            _audience = _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT Audience is not configured");
-            _expirationMinutes = int.Parse(_configuration["Jwt:ExpirationMinutes"] ?? "60");
+            _config = config;
+            _secretKey = _config["Jwt:SecretKey"] ?? throw new Exception("JWT SecretKey saknas");
+            _issuer = _config["Jwt:Issuer"] ?? throw new Exception("JWT Issuer saknas");
+            _audience = _config["Jwt:Audience"] ?? throw new Exception("JWT Audience saknas");
+            _expirationMinutes = int.Parse(_config["Jwt:ExpirationMinutes"] ?? "60");
         }
 
         public TokenDto GenerateToken(string userId, string email, string role)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, userId),
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role)
+                new(ClaimTypes.NameIdentifier, userId),
+                new(ClaimTypes.Email, email),
+                new(ClaimTypes.Role, role)
             };
 
             var token = new JwtSecurityToken(
@@ -41,7 +40,7 @@ namespace TheLoadingBeanAPI.Services
                 audience: _audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_expirationMinutes),
-                signingCredentials: credentials
+                signingCredentials: creds
             );
 
             return new TokenDto
@@ -53,22 +52,21 @@ namespace TheLoadingBeanAPI.Services
 
         public ClaimsPrincipal? ValidateToken(string token)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var handler = new JwtSecurityTokenHandler();
+            var parameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _issuer,
+                ValidAudience = _audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey))
+            };
 
             try
             {
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = _issuer,
-                    ValidAudience = _audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey))
-                };
-
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
+                var principal = handler.ValidateToken(token, parameters, out _);
                 return principal;
             }
             catch
@@ -77,4 +75,4 @@ namespace TheLoadingBeanAPI.Services
             }
         }
     }
-} 
+}

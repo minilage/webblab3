@@ -20,8 +20,6 @@ namespace TheLoadingBean.Shared.DTOs
 
     public class CreateProductDto
     {
-        [Required]
-        public string ProductNumber { get; set; } = string.Empty;
 
         [Required]
         public string Name { get; set; } = string.Empty;

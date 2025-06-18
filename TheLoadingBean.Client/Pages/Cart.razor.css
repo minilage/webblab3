@@ -74,9 +74,18 @@
 }
 
 .empty-cart-message {
-    color: var(--text-soft); /* eller exempelvis #D6E1FF */
-    font-size: 1.1rem;
+    color: #ffeacc;
+    font-size: 1.2rem;
     margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.empty-icon {
+    font-size: 1.4rem;
+    line-height: 1;
 }
 
 /* =============================

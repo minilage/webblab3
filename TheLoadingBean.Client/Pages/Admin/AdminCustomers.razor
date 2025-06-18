@@ -1,9 +1,9 @@
 ﻿@page "/admin/customers"
+@attribute [Authorize(Roles = "Admin")]
 @using TheLoadingBean.Client.Services
 @using Microsoft.AspNetCore.Authorization
 @using TheLoadingBean.Shared.DTOs
 @using MudBlazor
-@attribute [Authorize(Roles = "Admin")]
 @inject NavigationManager Navigation
 @inject ICustomerService CustomerService
 @inject ISnackbar Snackbar

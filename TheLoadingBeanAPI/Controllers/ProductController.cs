@@ -40,19 +40,52 @@ namespace TheLoadingBeanAPI.Controllers
             return Ok(products.Select(p => MapToResponseDto(p)));
         }
 
+
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductResponseDto>> CreateProduct(CreateProductDto createProductDto)
         {
+            // Generera prefix utifrån kategori
+            var prefix = createProductDto.Category.ToUpper() switch
+            {
+                "KAFFE" => "KAFFE",
+                "TE" => "TE",
+                "TILLBEHÖR" => "MUGG",
+                _ => "PRD"
+            };
+
+            // Hämta alla befintliga produkter och filtrera på prefix
+            var existing = await _unitOfWork.Products.GetAllProductsAsync();
+            var similarNumbers = existing
+                .Where(p => p.ProductNumber.StartsWith(prefix))
+                .Select(p => p.ProductNumber)
+                .ToList();
+
+            // Hitta högsta befintliga nummer för prefixet
+            int maxNumber = 0;
+            foreach (var number in similarNumbers)
+            {
+                var digits = new string(number.Skip(prefix.Length).ToArray());
+                if (int.TryParse(digits, out int n) && n > maxNumber)
+                {
+                    maxNumber = n;
+                }
+            }
+
+            // Skapa nytt unikt produktnummer
+            var nextNumber = maxNumber + 1;
+            var productNumber = $"{prefix}{nextNumber:D3}";
+
+            // Skapa produkten
             var product = new Product
             {
-                ProductNumber = createProductDto.ProductNumber,
+                ProductNumber = productNumber,
                 Name = createProductDto.Name,
                 Description = createProductDto.Description,
                 Price = createProductDto.Price,
                 Category = createProductDto.Category,
-                IsAvailable = true,
-                IsDiscontinued = false
+                IsAvailable = createProductDto.IsAvailable,
+                IsDiscontinued = createProductDto.IsDiscontinued
             };
 
             await _unitOfWork.Products.CreateProductAsync(product);
@@ -60,6 +93,7 @@ namespace TheLoadingBeanAPI.Controllers
 
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, MapToResponseDto(product));
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]

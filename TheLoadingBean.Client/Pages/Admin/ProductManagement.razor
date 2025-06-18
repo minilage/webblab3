@@ -1,4 +1,5 @@
 @page "/admin/products"
+@attribute [Authorize(Roles = "Admin")]
 @using TheLoadingBean.Shared.DTOs
 @using TheLoadingBean.Client.Services
 @using Microsoft.AspNetCore.Authorization
@@ -8,7 +9,6 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@attribute [Authorize(Roles = "Admin")]
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 6rem;">
     <MudCard>
@@ -77,16 +77,32 @@
 
     private async Task OpenAddDialog()
     {
-        var parameters = new DialogParameters { ["Product"] = new CreateProductDto() };
+        var parameters = new DialogParameters
+        {
+            ["Product"] = new ProductDto(),
+            ["IsEdit"] = false
+        };
+
         var dialog = await DialogService.ShowAsync<ProductDialog>("Lägg till produkt", parameters);
         var resultNullable = await dialog.Result;
 
-        if (resultNullable is not DialogResult result || result.Canceled || result.Data is not CreateProductDto newProduct)
+        if (resultNullable is not DialogResult result || result.Canceled || result.Data is not ProductDto newProduct)
             return;
 
         try
         {
-            await ProductService.CreateProductAsync(newProduct);
+            var createDto = new CreateProductDto
+            {
+                // ❌ Inte längre med: ProductNumber = newProduct.ProductNumber,
+                Name = newProduct.Name,
+                Description = newProduct.Description,
+                Price = newProduct.Price,
+                Category = newProduct.Category,
+                IsAvailable = newProduct.IsAvailable,
+                IsDiscontinued = newProduct.IsDiscontinued
+            };
+
+            await ProductService.CreateProductAsync(createDto);
             Snackbar.Add("Produkt tillagd", Severity.Success);
             await LoadProducts();
         }
@@ -96,12 +112,14 @@
         }
     }
 
+
     private async Task OpenEditDialog(ProductResponseDto? product)
     {
         if (product is null) return;
 
-        var updateDto = new UpdateProductDto
+        var dto = new ProductDto
         {
+            Id = product.Id,
             ProductNumber = product.ProductNumber,
             Name = product.Name,
             Description = product.Description,
@@ -111,16 +129,32 @@
             IsDiscontinued = product.IsDiscontinued
         };
 
-        var parameters = new DialogParameters { ["Product"] = updateDto };
+        var parameters = new DialogParameters
+        {
+            ["Product"] = dto,
+            ["IsEdit"] = true
+        };
+
         var dialog = await DialogService.ShowAsync<ProductDialog>("Redigera produkt", parameters);
         var resultNullable = await dialog.Result;
 
-        if (resultNullable is not DialogResult result || result.Canceled || result.Data is not UpdateProductDto updatedProduct)
+        if (resultNullable is not DialogResult result || result.Canceled || result.Data is not ProductDto updatedProduct)
             return;
 
         try
         {
-            await ProductService.UpdateProductAsync(product.Id, updatedProduct);
+            var updateDto = new UpdateProductDto
+            {
+                ProductNumber = updatedProduct.ProductNumber,
+                Name = updatedProduct.Name,
+                Description = updatedProduct.Description,
+                Price = updatedProduct.Price,
+                Category = updatedProduct.Category,
+                IsAvailable = updatedProduct.IsAvailable,
+                IsDiscontinued = updatedProduct.IsDiscontinued
+            };
+
+            await ProductService.UpdateProductAsync(product.Id, updateDto);
             Snackbar.Add("Produkt uppdaterad", Severity.Success);
             await LoadProducts();
         }
@@ -129,6 +163,7 @@
             Snackbar.Add("Kunde inte uppdatera produkt", Severity.Error);
         }
     }
+
 
     private async Task OpenDeleteDialog(ProductResponseDto? product)
     {

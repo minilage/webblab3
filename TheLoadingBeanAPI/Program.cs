@@ -6,10 +6,11 @@ using TheLoadingBeanAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// MongoDB-konfiguration
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDB"));
 
-// Add controller and Swagger services
+// Lägg till controllers och Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -21,7 +22,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API for managing products, customers, and orders."
     });
 
-    // Add JWT Authentication
+    // JWT-konfiguration i Swagger
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -47,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configure JWT Authentication
+// JWT-autentisering
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -64,26 +65,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Register services
+// Registrera tjänster
 builder.Services.AddScoped<IUnitOfWork, MongoUnitOfWork>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// Enable CORS for local development with Blazor WebAssembly
+// CORS-policy
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("https://localhost:7270")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+            policy
+                .WithOrigins("https://localhost:7270", "http://localhost:7270")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials(); // Viktigt om du använder Blazored.LocalStorage med auth
         });
 });
 
 var app = builder.Build();
 
-// Enable Swagger in development
+// Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -96,7 +99,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Apply CORS policy before routing or authorization
+// Viktigt: använd CORS före authentication
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();

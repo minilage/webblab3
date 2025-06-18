@@ -82,19 +82,20 @@ namespace TheLoadingBean.Client.Auth
             if (keyValuePairs == null)
                 return claims;
 
-            if (keyValuePairs.TryGetValue(ClaimTypes.Role, out object? roles) && roles != null)
+            // Lägg till detta (för att tolka vanlig "role")
+            if (keyValuePairs.TryGetValue("role", out object? roleObj) && roleObj is not null)
             {
-                if (roles.ToString()!.Trim().StartsWith("["))
+                if (roleObj.ToString()!.Trim().StartsWith("["))
                 {
-                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roles.ToString()!) ?? Array.Empty<string>();
+                    var parsedRoles = JsonSerializer.Deserialize<string[]>(roleObj.ToString()!) ?? Array.Empty<string>();
                     claims.AddRange(parsedRoles.Select(role => new Claim(ClaimTypes.Role, role)));
                 }
                 else
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, roles.ToString()!));
+                    claims.Add(new Claim(ClaimTypes.Role, roleObj.ToString()!));
                 }
 
-                keyValuePairs.Remove(ClaimTypes.Role);
+                keyValuePairs.Remove("role"); // ta bort så det inte läggs dubbelt
             }
 
             claims.AddRange(keyValuePairs
@@ -103,6 +104,7 @@ namespace TheLoadingBean.Client.Auth
 
             return claims;
         }
+
 
         private byte[] ParseBase64WithoutPadding(string base64)
         {

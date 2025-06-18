@@ -13,7 +13,7 @@
 
     @if (user is not null)
     {
-        <MudText Typo="Typo.h4" Class="mb-4 text-center">Hi, @user.FirstName!</MudText>
+        <h2 class="user-greeting">Hi, @user?.FirstName!</h2>
     }
 
     <MudCard Class="mb-4">

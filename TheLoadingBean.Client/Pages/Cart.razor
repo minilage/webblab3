@@ -8,8 +8,12 @@
 
     @if (cartItems.Count == 0)
     {
-        <p class="empty-cart-message">Your cart is empty.</p>
+        <div class="empty-cart-message">
+            <span class="empty-icon">🛒</span>
+            <span>Your cart is empty.</span>
+        </div>
     }
+
     else
     {
         <MudPaper Class="cart-wrapper">

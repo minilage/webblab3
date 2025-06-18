@@ -33,6 +33,13 @@ body {
     margin-top: 0 !important;
 }
 
+.user-greeting {
+    color: #ffeacc;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
 /* =============================
    MUDLAYOUT CONTAINER
 ============================= */
