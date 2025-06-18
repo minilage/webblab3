@@ -1,92 +1,96 @@
+# ☕ The Loading Bean – E-handelsapplikation
+
+En fullstack webbshop byggd i .NET 8 och Blazor WebAssembly för en mysig och nördig kaffeupplevelse.  
+Utvecklad som en del av min .NET-fullstackutbildning på IT-Högskolan.
 
 ---
 
-## ✅ `README.md`
+## ✨ Funktioner
 
-```markdown
-# ☕ The Loading Bean – E-Commerce Web Application
+### Produkthantering
+- Visa alla produkter
+- Lägg till, uppdatera och ta bort produkter (endast admin)
+- Markera produkter som utgångna
+- Produkterna är kategoriserade (t.ex. kaffe, te, muggar)
 
-A fullstack webshop built in .NET 8 and Blazor WebAssembly for a cozy and nerdy coffee experience.  
-Created as part of my .NET fullstack course at IT-Högskolan.
+### Kundhantering
+- Registrera konto och logga in
+- Uppdatera din profil
+- Se din orderhistorik
+- Säker inloggning med JWT och rollbaserad åtkomst
 
----
-
-## ✨ Features
-
-### Product Management
-- View all products
-- Add, update, and delete products (Admin only)
-- Mark products as discontinued
-- Products are categorized (e.g., Coffee, Tea, Mugs)
-
-### Customer Management
-- Register and log in
-- Update your profile
-- View your order history
-- Secure JWT authentication with role-based access
-
-### Order Management
-- Place orders from your cart
-- See order history with total and content
-- Admins can view all customer orders
+### Orderhantering
+- Lägg beställningar från varukorgen
+- Se orderhistorik med totalsumma och innehåll
+- Admin kan se alla kunders ordrar
 
 ---
 
-## 🛡️ Security
+## 🛡️ Säkerhet
 
-- JWT-based authentication
-- Role-based authorization (`Admin` and `User`)
-- Protected routes in both API and Blazor frontend
+- JWT-baserad autentisering
+- Rollbaserad behörighet ("Admin" och "User")
+- Skyddade endpoints i både API och Blazor-klienten
 
 ---
 
-## ⚙️ Tech Stack
+## ⚙️ Teknisk stack
 
 ### Backend
 
 - ASP.NET Core 8.0 Web API
-- MongoDB (hosted on Atlas)
+- MongoDB Atlas
 - Repository Pattern & Unit of Work
 - JWT (System.IdentityModel.Tokens.Jwt)
 
 ### Frontend
 
 - Blazor WebAssembly (.NET 8)
-- MudBlazor components for UI
+- MudBlazor-komponenter för UI
 - Blazored.LocalStorage + Blazored.Toast
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Kom igång
 
-### Prerequisites
+### Förutsättningar
 
 - .NET 8 SDK  
-- MongoDB Atlas or MongoDB Compass  
-- Visual Studio 2022 or newer
+- Konto på MongoDB Atlas  
+- Visual Studio 2022 eller senare
 
-### MongoDB Setup
+### MongoDB Atlas-konfiguration
 
-1. Create a new database: `TheLoadingBean`
-2. Import the JSON collections:  
-   - `TheLoadingBeanDb.Products.json`  
-   - `TheLoadingBeanDb.Customers.json`  
-   - `TheLoadingBeanDb.Orders.json`
+1. Gå till [https://cloud.mongodb.com](https://cloud.mongodb.com) och logga in
+2. Använd anslutningssträngen (lagrad **utanför denna README**, se separat inlämning för inloggning)
+3. Uppdatera `appsettings.json` i TheLoadingBean.API så här:
 
-3. Update the connection string in `appsettings.json`.
+```json
+"MongoDB": {
+  "ConnectionString": "<din MongoDB Atlas connection string>",
+  "DatabaseName": "TheLoadingBeanDB"
+}
+```
 
-### Run the App
+> ⚠️ **För bedömning:** En testanvändare finns tillgänglig och är dokumenterad i den separata inlämningen.
+
+### Starta applikationen
 
 ```bash
-# Start the API
+# Starta API
 cd TheLoadingBean.API
 dotnet run
 
-# Start the client
+# Starta klienten
 cd TheLoadingBean.Client
 dotnet run
+```
 
-Tina Lagesson
+---
+
+## 👩‍💻 Utvecklare
+
+**Tina Lagesson**  
 tina.lagesson@gmail.com
 
-This project was developed with love (and caffeine) as part of my .NET fullstack course.
+Detta projekt är utvecklat med kärlek (och koffein) som en del av min .NET-fullstackutbildning.

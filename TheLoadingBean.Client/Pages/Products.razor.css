@@ -3,7 +3,7 @@
 ============================= */
 
 /* =============================
-   SEKTION: GRUNDLÄGGANDE LAYOUT
+   GRUNDLÄGGANDE LAYOUT
 ============================= */
 .products-section {
     padding: 2rem 1rem;
@@ -12,13 +12,13 @@
 }
 
 /* =============================
-   SEKTION: RUBRIKER
+   RUBRIKER
 ============================= */
 .page-title {
     font-family: 'Pacifico', cursive;
     color: #fff0dc;
-    margin-bottom: 1.5rem;
     margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .popular-products-wrapper {
@@ -35,7 +35,7 @@
 }
 
 /* =============================
-   SEKTION: FILTER – BEIGE VERSION
+   FILTER – BEIGE STIL
 ============================= */
 .products-filter.beige-filter {
     background-color: #ffeacc;
@@ -50,15 +50,12 @@
     background-color: #fffaf5 !important;
     color: #1e392a !important;
     border-radius: 6px;
-    box-shadow: none;
     border: 1px solid #ccb49c !important;
+    box-shadow: none;
 }
 
-.products-filter .mud-input-input,
-.products-filter .mud-select-input {
-    color: #1e392a !important;
-}
-
+    .products-filter .mud-input-input,
+    .products-filter .mud-select-input,
     .products-filter .mud-input-label,
     .products-filter .mud-input-input::placeholder,
     .products-filter .mud-select .mud-input-label {
@@ -67,52 +64,45 @@
     }
 
 /* =============================
-   DROPDOWN (POPUP MENY)
+   DROPDOWN MENY (POPUP)
 ============================= */
-.mud-popover {
+.mud-popover,
+.mud-popover .mud-list,
+.mud-popover .mud-list-item {
     background-color: #fffaf5 !important;
     color: #1e392a !important;
+    font-weight: 500;
+}
+
+.mud-popover {
     border-radius: 0 0 6px 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-    .mud-popover .mud-list {
-        background-color: #fffaf5 !important;
-    }
-
-    .mud-popover .mud-list-item {
-        background-color: #fffaf5 !important;
+    .mud-popover .mud-list-item:hover {
+        background-color: #e0d2c1 !important;
         color: #1e392a !important;
-        font-weight: 500;
     }
-
-        .mud-popover .mud-list-item:hover {
-            background-color: #e0d2c1 !important;
-            color: #1e392a !important;
-        }
 
 /* =============================
-   SEKTION: PRODUKTKORT
+   PRODUKTKORT
 ============================= */
 .mud-grid > .mud-item {
     display: flex;
-    flex-direction: column;
+    padding: 0.75rem !important;
 }
 
-/* Kortens helhet */
 .product-card {
     background-color: #ffeacc !important;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    padding: 1rem;
-    text-align: center;
-    transition: transform 0.2s ease-in-out;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    text-align: center;
     height: 100%;
-    min-height: 440px;
-    max-height: 440px;
+    transition: transform 0.2s ease-in-out;
+    padding: 0;
 }
 
     .product-card:hover {
@@ -120,19 +110,27 @@
         cursor: pointer;
     }
 
-    /* Bilden hålls proportionerlig och nedskalad */
     .product-card .mud-card-media,
     .product-image {
-        flex-shrink: 0;
         width: 100%;
-        height: 180px;
+        height: 220px;
         object-fit: contain;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        background-color: #fff;
+        padding: 0.5rem;
+        border-radius: 8px 8px 0 0;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0;
     }
 
-/* Text & pris */
+.mud-card-content,
+.mud-card-actions {
+    background-color: #ffeacc !important;
+    padding: 1rem !important;
+}
+
+/* =============================
+   TEXTINNEHÅLL I KORT
+============================= */
 .product-title {
     font-size: 1.2rem;
     font-weight: bold;
@@ -147,10 +145,22 @@
 }
 
 /* =============================
-   RESPONSIVITET
+   RESPONSIV DESIGN
 ============================= */
 @media (max-width: 768px) {
     .product-image {
         max-height: 140px;
+    }
+
+    .popular-title {
+        font-size: 1.5rem;
+    }
+
+    .product-title {
+        font-size: 1rem;
+    }
+
+    .product-price {
+        font-size: 0.9rem;
     }
 }
